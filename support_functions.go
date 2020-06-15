@@ -2,6 +2,9 @@ package main
 
 import (
 	"bufio"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -12,7 +15,7 @@ import (
 //#####################################################
 // gets the array of files which should be archived by searchFileByFileSize(), source and destination folder
 // returns true if successfully implemented symlinks, error if occoured
-func proveSymLink(sourceFiles[] string, filenames []string, destFolder string)(bool, error){
+func proveSymLink(sourceFiles[] string, filenames []string, destFolder string, randPrefix string)(bool, error){
 	if whichOS == "windows"{
 		destFolder = filepath.FromSlash(destFolder)		//only for windows
 		message(1,"[proveSymLink]", "OS not supported")
@@ -35,8 +38,11 @@ func proveSymLink(sourceFiles[] string, filenames []string, destFolder string)(b
 				return false, err
 			}
 
-			if  symlinkDestination == destFolder+strconv.Itoa(fileCount)+filenames[i]{
-				message(0, "[proveSymLink]", sourceFile, destFolder+strconv.Itoa(fileCount)+filenames[i])
+			if  symlinkDestination == destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i]{
+				message(0, "[proveSymLink]", sourceFile, destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i])
+			}else{
+				message(1,"[proveSymLink]", "Proving Symlink failed!")
+				return false, errors.New("[proveSymLink] Failed proving Symlink")
 			}
 			fileCount++
 		}
@@ -246,3 +252,20 @@ func writeLogFile(file io.Writer, output string) error{
 	return nil
 }
 //#####################################################
+
+
+// GenerateRandomString returns a URL-safe, base64 encoded
+// securely generated random string.
+func GenerateRandomString() string {
+	b := GenerateRandomBytes(3)
+	return base64.URLEncoding.EncodeToString(b)		//encode random byte array to base64 encoding
+}
+
+func GenerateRandomBytes(n int) []byte {
+	b := make([]byte, n)		//new byte array of length n
+	_, err := rand.Read(b)		//fill array with random
+	if err != nil {				//if error print
+		println(err)
+	}
+	return b					//return array
+}

@@ -26,19 +26,21 @@ func runByDays(days int64, dest string, source string){
 		return
 	}
 
+	randPrefix := GenerateRandomString()
+
 	var accept string
 	fmt.Printf("Archiving will now start and cannot be cancelled!\nconfirm (y/n)\n\n")
 	_, err = fmt.Scanln(&accept)
 	if accept == "y" && err == nil{
 		//archive this files
-		err = archive(filesToArchive, filenames, dest)
+		err = archive(filesToArchive, filenames, dest, randPrefix)
 		if  err != nil{
 			fmt.Println(err)
 			message(1,"")
 			return
 		}
 		//proof if symlinks successfully set and files archived
-		isArchived, err := proveSymLink(filesToArchive, filenames, dest)
+		isArchived, err := proveSymLink(filesToArchive, filenames, dest, randPrefix)
 		if isArchived && err == nil{
 			fmt.Println("[runByDays] Succesfully archived!")
 		}else{
