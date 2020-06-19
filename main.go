@@ -1,4 +1,3 @@
-
 /*****************
 *
 * MST (Move & Symlink Tool)
@@ -18,11 +17,11 @@ import (
 	"runtime"
 )
 
-var logVar bool	//log variable is used in message-function, dir for archive whole dirs
+var logVar bool //log variable is used in message-function, dir for archive whole dirs
 var logname string
 var whichOS = runtime.GOOS
 
-func main(){
+func main() {
 	fmt.Println("\nWelcome to MST (Move & Symlink Tool)")
 	fmt.Println("")
 
@@ -33,35 +32,34 @@ func main(){
 
 	help := flag.Bool("help", false, "help")
 	h := flag.Bool("h", false, "help")
-	flag.IntVar(&m,"m", 0, "mode 0 = biggest file; 1 = days, 2 = dir size")
-	flag.Int64Var(&size,"size", 0, "file size in megabyte")
-	flag.Int64Var(&days,"days", 0, "date in days")
-	flag.StringVar(&dest,"dest", "", "destination (/which/folder/)")
-	flag.StringVar(&src,"src", "", "source (/which/folder/)")
-	flag.BoolVar(&logVar,"log", false, "logging (bool)")
-	flag.IntVar(&depth,"depth", 3, "archive depth")
-	flag.BoolVar(&analyze,"a", false, "analyze all files or dir's and make output")
+	flag.IntVar(&m, "m", 0, "mode 0 = biggest file; 1 = days, 2 = dir size")
+	flag.Int64Var(&size, "size", 0, "file size in megabyte")
+	flag.Int64Var(&days, "days", 0, "date in days")
+	flag.StringVar(&dest, "dest", "", "destination (/which/folder/)")
+	flag.StringVar(&src, "src", "", "source (/which/folder/)")
+	flag.BoolVar(&logVar, "log", false, "logging (bool)")
+	flag.IntVar(&depth, "depth", 3, "archive depth")
+	flag.BoolVar(&analyze, "a", false, "analyze all files or dir's and make output")
 
 	flag.Parse()
 
-	if *help || *h{
+	if *help || *h {
 		printHelp()
 		return
 	}
 
-
-	if whichOS == "linux" || whichOS == "windows"{
+	if whichOS == "linux" || whichOS == "windows" {
 
 		//#####################################################
 		//if log is set, create logfile
-		if logVar{
+		if logVar {
 			logname = "mstLog.log"
 			file, err := os.Create(logname)
-			if err != nil{
+			if err != nil {
 				log.Fatal(err)
 			}
 			err = file.Close()
-			if err != nil{
+			if err != nil {
 				log.Fatal(err)
 			}
 		}
@@ -74,69 +72,71 @@ func main(){
 			// function exists, therefore only print array
 			size *= 1000000 //megabyte to byte
 			_, _, err := searchFileByFileSize(size, src)
-			if err != nil{
-				message(1,"Error while analyzing situation", "Exit")
+			if err != nil {
+				message(1, "Error while analyzing situation", "Exit")
 				fmt.Println(err)
 				return
 			}
 			message(0, "Files successfully analyzed\n")
 			return
-		}else if analyze && m == 1 && src[len(src)-1:] == "/" && days > 0{
+		} else if analyze && m == 1 && src[len(src)-1:] == "/" && days > 0 {
 			fmt.Println("Analyze the situation, this will take few minutes...")
 			// function exists, therefore only print array
 			size *= 1000000 //megabyte to byte
 			_, _, err := searchFileByDays(days, src)
-			if err != nil{
-				message(1,"Error while analyzing situation", "Exit")
+			if err != nil {
+				message(1, "Error while analyzing situation", "Exit")
 				fmt.Println(err)
 				return
 			}
 			message(0, "Files successfully analyzed\n")
 			return
-		}else if analyze && m == 2 && src[len(src)-1:] == "/" && depth > 0{
-			message(9,"During now, only files are allowed")
+		} else if analyze && m == 2 && src[len(src)-1:] == "/" && depth > 0 {
+			message(9, "During now, only files are allowed")
 			return
-		}else if analyze{
+		} else if analyze {
 			printHelp()
 			fmt.Println("[ERROR] Bad arguments!")
-			message(1,"")
+			message(1, "")
 			return
 		}
 		//#####################################################
 
 		//#####################################################
 		//check correct src and dest arguments
-		if src == "" || dest == ""{
+		if src == "" || dest == "" {
 			printHelp()
 			fmt.Println("[ERROR] Missing arguments!")
-			message(1,"")
+			message(1, "")
 			return
-		}else if src == dest{
+		} else if src == dest {
 			printHelp()
 			fmt.Println("[ERROR] Source can not be same as Destination!")
-			message(1,"")
+			message(1, "")
 			return
 		}
 		//#####################################################
 
-
 		//#####################################################
 		var accept string
 		//check arguments and partition into modes
-		if m == 0 && size > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false{
-			if size == 0 { message(3,"[Modified] default parameter size=20"); size = 20 }
-			fmt.Printf("Program will now analyze the situation with arguments: mode=%d, size=%d, src=%s, dest=%s log=%t\nconfirm (y/n)\n\n",m ,size, src, dest, logVar)
+		if m == 0 && size > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false {
+			if size == 0 {
+				message(3, "[Modified] default parameter size=20")
+				size = 20
+			}
+			fmt.Printf("Program will now analyze the situation with arguments: mode=%d, size=%d, src=%s, dest=%s log=%t\nconfirm (y/n)\n\n", m, size, src, dest, logVar)
 			_, err := fmt.Scanln(&accept)
-			if accept == "y" && err == nil{
+			if accept == "y" && err == nil {
 				size *= 1000000 //megabyte to byte
 				runByFileSize(size, dest, src)
-			}else if accept == "n" && err == nil{
-				message(4,"User Interrupt")
-			}else{
+			} else if accept == "n" && err == nil {
+				message(4, "User Interrupt")
+			} else {
 				fmt.Println(err)
 				return
 			}
-		}else if m == 1 && days > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false{
+		} else if m == 1 && days > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false {
 			if days == 0 {
 				message(3, "[Modified] default parameter days=60")
 				days = 60
@@ -152,30 +152,21 @@ func main(){
 				fmt.Println(err)
 				return
 			}
-		}else if m == 2 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && size == 0 && analyze == false && (depth >= 0|| depth == -1){
-			message(9,"During now, only files are allowed")
+		} else if m == 2 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && size == 0 && analyze == false && (depth >= 0 || depth == -1) {
+			message(9, "During now, only files are allowed")
 			return
 
-		//if arguments check failed, print to user
-		}else{
+			//if arguments check failed, print to user
+		} else {
 			printHelp()
 			fmt.Println("[ERROR] Bad arguments!")
-			message(1,"")
+			message(1, "")
 			return
 		}
 		//#####################################################
-	}else{
+	} else {
 		//if OS is not supported
-		fmt.Printf("OS %s not supported!",whichOS)
+		fmt.Printf("OS %s not supported!", whichOS)
 		return
 	}
 }
-
-
-
-
-
-
-
-
-
