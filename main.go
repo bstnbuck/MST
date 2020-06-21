@@ -18,7 +18,8 @@ import (
 )
 
 var logVar bool //log variable is used in message-function, dir for archive whole dirs
-var logname string
+var logname = "mstLog.log"
+var systemLog = "systemLog.log"
 var whichOS = runtime.GOOS
 
 func main() {
@@ -41,29 +42,52 @@ func main() {
 	flag.IntVar(&depth, "depth", 3, "archive depth")
 	flag.BoolVar(&analyze, "a", false, "analyze all files or dir's and make output")
 
+	//new flags to reset last execution and remove all moved files and symlinks
+	reset := flag.Bool("reset", false, "reset last move & symlink execution")
+	remove := flag.Bool("remove", false, "remove all files from last move & symlink execution")
+
 	flag.Parse()
 
-	if *help || *h {
+	if logVar {
+		//if log is set, create logfile
+		file, err := os.Create(logname)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	switch {
+	case *help || *h:
 		printHelp()
+		return
+	case *reset:
+		err := runReset()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
+	case *remove:
+		err := runRemove()
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 
-	if whichOS == "linux" || whichOS == "windows" {
+	sysLogFile, err := os.Create(systemLog)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = sysLogFile.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		//#####################################################
-		//if log is set, create logfile
-		if logVar {
-			logname = "mstLog.log"
-			file, err := os.Create(logname)
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = file.Close()
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-		//#####################################################
+	if whichOS == "linux" || whichOS == "windows" {
 
 		//#####################################################
 		// if analyze is set and arguments are passed, analyze which files can be archived, after that exit
@@ -125,6 +149,7 @@ func main() {
 				message(3, "[Modified] default parameter size=20")
 				size = 20
 			}
+
 			fmt.Printf("Program will now analyze the situation with arguments: mode=%d, size=%d, src=%s, dest=%s log=%t\nconfirm (y/n)\n\n", m, size, src, dest, logVar)
 			_, err := fmt.Scanln(&accept)
 			if accept == "y" && err == nil {

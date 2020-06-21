@@ -42,7 +42,7 @@ func runByDays(days int64, dest string, source string) {
 		//proof if symlinks successfully set and files archived
 		isArchived, err := proveSymLink(filesToArchive, filenames, dest, randPrefix)
 		if isArchived && err == nil {
-			fmt.Println("[runByDays] Succesfully archived!")
+			fmt.Println("[runByDays] Successfully archived!")
 		} else {
 			fmt.Println("[ERROR - runByDays] While proving symlinks")
 			fmt.Println(err)

@@ -1,4 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/bstnbuck/Simple-Go-Blockchain/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bstnbuck/MST)](https://goreportcard.com/report/github.com/bstnbuck/MST)
+[![Build Status](https://travis-ci.org/bstnbuck/MST.svg?branch=master)](https://travis-ci.org/bstnbuck/MST)
 # MST (Move & Symlink Tool)
 
 >**Not all functions are implemented yet! Right now MST is in an alpha stage.
@@ -39,15 +41,18 @@
 - -log	-> turn logging on (default = false)
 - -a -> analyze all files that could be archived (default = false)
 - -depth -> only in combination with -m 2, depth to search dir's (-1 = all) (default = 3)
+- reset	-> reset all changes of last run, optional with -log
+- remove -> remove all changes of last run, optional with -log
 ***
 ##### Status-Codes
-0=Success; 1=Failure; 3=Modified; 4=User Interrupt; 9=Not implemented
+0=Success; 1=Failure; 2=Info; 3=Modified; 4=User Interrupt; 9=Not implemented
 ***
 
 ### Examples
 - -m 1 -days 360 -src "/test/testdrive/" -log -a (MST analyze within elapsed 360 days and search in directory and log all commands)
 - (-m 0) -size 2 -src "/test/testDrive/" -dest "/test/testPaste/" -log (MST with filesize = 2 MB and logging)
 - -h (or -help) (prints help)
+- -reset -log
 
 
 ### Information

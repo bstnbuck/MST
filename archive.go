@@ -21,6 +21,11 @@ func archive(sourceFiles []string, filenames []string, destFolder string, randPr
 			return err
 		}
 
+		err = sysLogging(sourceFile, destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i])
+		if err != nil {
+			return err
+		}
+
 		// only linux using
 		//new output name is, something random + file-id + file-name, this prevent matching file-names
 		err = os.Symlink(destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i], sourceFile)

@@ -78,9 +78,11 @@ func printHelp() {
 		"-log			turn logging on (default = false)\n" +
 		"-a			analyze all files that could be archived (default = false)\n" +
 		"-depth			only in combination with -m 2, depth to search dir's (-1 = all) (default = 3)\n" +
+		"-reset			reset all changes of last run, optional with -log\n" +
+		"-remove			remove all changes of last run, optional with -log\n" +
 		"#**************************************#\n" +
 		"Status-Codes \n" +
-		"0=Success; 1=Failure; 3=Modified; 4=User Interrupt; 9=Not implemented\n" +
+		"0=Success; 1=Failure; 2=Info; 3=Modified; 4=User Interrupt; 9=Not implemented\n" +
 		"#**************************************#")
 }
 
@@ -237,6 +239,31 @@ func message(mode int, messageToOutput ...string) {
 
 //#####################################################
 
+//logs all changes to file which is easy readable for program
+func sysLogging(source string, dest string) error {
+
+	sysLogFile, err := os.OpenFile(systemLog, os.O_APPEND|os.O_WRONLY, 0755)
+	if err != nil {
+		return err
+	}
+
+	writer := bufio.NewWriter(sysLogFile)
+
+	_, err = fmt.Fprintf(writer, "%s:%s\n", source, dest)
+	if err != nil {
+		return err
+	}
+	err = writer.Flush()
+	if err != nil {
+		return err
+	}
+	err = sysLogFile.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //#####################################################
 // writes messages into log file if desired
 func writeLogFile(file io.Writer, output string) error {
@@ -244,6 +271,9 @@ func writeLogFile(file io.Writer, output string) error {
 	writer := bufio.NewWriter(file)
 
 	_, err := fmt.Fprintf(writer, "%v", output)
+	if err != nil {
+		return err
+	}
 	err = writer.Flush()
 	if err != nil {
 		return err
@@ -260,6 +290,7 @@ func GenerateRandomString() string {
 	return base64.URLEncoding.EncodeToString(b) //encode random byte array to base64 encoding
 }
 
+// make random bytes and return them
 func GenerateRandomBytes(n int) []byte {
 	b := make([]byte, n)   //new byte array of length n
 	_, err := rand.Read(b) //fill array with random

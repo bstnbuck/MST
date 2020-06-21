@@ -44,7 +44,7 @@ func runByFileSize(size int64, dest string, source string) {
 		//proof if symlinks successfully set and files archived
 		isArchived, err := proveSymLink(filesToArchive, filenames, dest, randPrefix)
 		if isArchived && err == nil {
-			fmt.Println("[runByFileSize] Succesfully archived!")
+			fmt.Println("[runByFileSize] Successfully archived!")
 		} else {
 			fmt.Println("[ERROR - runFileSize] While proving symlinks")
 			fmt.Println(err)
