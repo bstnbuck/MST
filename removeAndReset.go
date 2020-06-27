@@ -8,13 +8,13 @@ import (
 )
 
 // reset last program execution
-func runReset() error {
+func runReset(sysLogFileName string) error {
 	if whichOS == "linux" {
 		var accept string
 		fmt.Printf("This will reset all made changes from last run. Run cannot be cancelled!\nconfirm (y/n)\n\n")
 		_, err := fmt.Scanln(&accept)
 		if accept == "y" && err == nil {
-			sysLogFile, err := os.OpenFile(systemLog, os.O_RDWR, 0755)
+			sysLogFile, err := os.OpenFile(sysLogFileName, os.O_RDWR, 0755)
 			if err != nil {
 				return err
 			}
@@ -58,14 +58,14 @@ func runReset() error {
 }
 
 // remove all made changes
-func runRemove() error {
+func runRemove(sysLogFileName string) error {
 
 	if whichOS == "linux" {
 		var accept string
 		fmt.Printf("Remove will now start, cannot be cancelled and undone!\nconfirm (y/n)\n\n")
 		_, err := fmt.Scanln(&accept)
 		if accept == "y" && err == nil {
-			sysLogFile, err := os.OpenFile(systemLog, os.O_RDWR, 0755)
+			sysLogFile, err := os.OpenFile(sysLogFileName, os.O_RDWR, 0755)
 			if err != nil {
 				return err
 			}

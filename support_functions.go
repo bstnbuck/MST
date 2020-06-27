@@ -69,17 +69,18 @@ func printHelp() {
 		"	or run with system / program files\n" +
 		"#**************************************#\n" +
 		"Arguments: 	-m -size -days -dest -src -help -h -log -a -depth\n" +
-		"-m 			Select running mode 0 = file size (default); 1 = days; 2 = dir size\n" +
+		"-m 			Select running mode 0 = file size (default); 1 = days\n" +
 		"-size			Archive files by file size (default 20MB)\n" +
 		"-days (beta)		Archive files by days (last modified) (default 60 days)\n" +
 		"-dest (required)	Specify destination path (like: \"/var/www/newPath/\")\n" +
 		"-src  (required)	Specify source path (like: \"/var/www/newPath/\")\n" +
 		"-help -h		see this help\n" +
 		"-log			turn logging on (default = false)\n" +
+		"-save			save system log file with actual date(default = false)\n" +
 		"-a			analyze all files that could be archived (default = false)\n" +
-		"-depth			only in combination with -m 2, depth to search dir's (-1 = all) (default = 3)\n" +
 		"-reset			reset all changes of last run, optional with -log\n" +
 		"-remove			remove all changes of last run, optional with -log\n" +
+		"-filename		choose other systemLog file for -reset or -remove\n" +
 		"#**************************************#\n" +
 		"Status-Codes \n" +
 		"0=Success; 1=Failure; 2=Info; 3=Modified; 4=User Interrupt; 9=Not implemented\n" +

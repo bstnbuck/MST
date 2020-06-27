@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/bstnbuck/MST.svg?branch=master)](https://travis-ci.org/bstnbuck/MST)
 # MST (Move & Symlink Tool)
 
+MST searches for large or old files and moves them to another drive (e.g. external hard disk) to avoid filling up your own
+
 >**Not all functions are implemented yet! Right now MST is in an alpha stage.
   Attention! It is strongly discouraged to run with sudo rights	or run with system / program files**
 
@@ -39,10 +41,11 @@
 - -src (required) -> Specify source path (like: "/var/www/newPath/")
 - -help -h -> see this help
 - -log	-> turn logging on (default = false)
+- -save	-> save system log file with actual date(default = false)
 - -a -> analyze all files that could be archived (default = false)
-- -depth -> only in combination with -m 2, depth to search dir's (-1 = all) (default = 3)
-- reset	-> reset all changes of last run, optional with -log
-- remove -> remove all changes of last run, optional with -log
+- -reset	-> reset all changes of last run, optional with -log
+- -remove -> remove all changes of last run, optional with -log
+- -filename	-> choose other systemLog file for -reset or -remove
 ***
 ##### Status-Codes
 0=Success; 1=Failure; 2=Info; 3=Modified; 4=User Interrupt; 9=Not implemented
@@ -52,12 +55,11 @@
 - -m 1 -days 360 -src "/test/testdrive/" -log -a (MST analyze within elapsed 360 days and search in directory and log all commands)
 - (-m 0) -size 2 -src "/test/testDrive/" -dest "/test/testPaste/" -log (MST with filesize = 2 MB and logging)
 - -h (or -help) (prints help)
-- -reset -log
+- -reset -filename "systemLog2020-6-27-12-11-19.log" -log
 
 
 ### Information
 - MST only runs with Linux OS
 
 ### The following is still being implemented
-* Move whole directory to another place and make optional tar or zip file.
 * Maybe Windows support.

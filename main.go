@@ -15,10 +15,12 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"time"
 )
 
-var logVar bool //log variable is used in message-function, dir for archive whole dirs
+var logVar, saveLog bool //log variable is used in message-function, dir for archive whole dirs
 var logname = "mstLog.log"
+
 var systemLog = "systemLog.log"
 var whichOS = runtime.GOOS
 
@@ -26,21 +28,22 @@ func main() {
 	fmt.Println("\nWelcome to MST (Move & Symlink Tool)")
 	fmt.Println("")
 
-	var m, depth int
+	var m int
 	var size, days int64
-	var dest, src string
+	var dest, src, sysLogFileName string
 	var analyze bool
 
 	help := flag.Bool("help", false, "help")
 	h := flag.Bool("h", false, "help")
-	flag.IntVar(&m, "m", 0, "mode 0 = biggest file; 1 = days, 2 = dir size")
+	flag.IntVar(&m, "m", 0, "mode 0 = biggest file; 1 = days")
 	flag.Int64Var(&size, "size", 0, "file size in megabyte")
 	flag.Int64Var(&days, "days", 0, "date in days")
 	flag.StringVar(&dest, "dest", "", "destination (/which/folder/)")
 	flag.StringVar(&src, "src", "", "source (/which/folder/)")
 	flag.BoolVar(&logVar, "log", false, "logging (bool)")
-	flag.IntVar(&depth, "depth", 3, "archive depth")
+	flag.BoolVar(&saveLog, "save", false, "logging with current date (bool)")
 	flag.BoolVar(&analyze, "a", false, "analyze all files or dir's and make output")
+	flag.StringVar(&sysLogFileName, "filename", "systemLog.log", "other systemLog name for reset and remove")
 
 	//new flags to reset last execution and remove all moved files and symlinks
 	reset := flag.Bool("reset", false, "reset last move & symlink execution")
@@ -65,13 +68,13 @@ func main() {
 		printHelp()
 		return
 	case *reset:
-		err := runReset()
+		err := runReset(sysLogFileName)
 		if err != nil {
 			log.Fatal(err)
 		}
 		return
 	case *remove:
-		err := runRemove()
+		err := runRemove(sysLogFileName)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -85,6 +88,19 @@ func main() {
 	err = sysLogFile.Close()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	//rename logFile to filename + actual date
+	if saveLog {
+		defer func() {
+			y, m, d := time.Now().Date()
+			h, min, s := time.Now().Clock()
+			saveLogName := fmt.Sprintf("systemLog%d-%d-%d-%d-%d-%d.log", y, m, d, h, min, s)
+			err := os.Rename(systemLog, saveLogName)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 	}
 
 	if whichOS == "linux" || whichOS == "windows" {
@@ -114,9 +130,6 @@ func main() {
 				return
 			}
 			message(0, "Files successfully analyzed\n")
-			return
-		} else if analyze && m == 2 && src[len(src)-1:] == "/" && depth > 0 {
-			message(9, "During now, only files are allowed")
 			return
 		} else if analyze {
 			printHelp()
@@ -177,10 +190,6 @@ func main() {
 				fmt.Println(err)
 				return
 			}
-		} else if m == 2 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && size == 0 && analyze == false && (depth >= 0 || depth == -1) {
-			message(9, "During now, only files are allowed")
-			return
-
 			//if arguments check failed, print to user
 		} else {
 			printHelp()
