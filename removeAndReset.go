@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -30,9 +31,42 @@ func runReset(sysLogFileName string) error {
 				if err != nil {
 					return err
 				}
-				err = os.Rename(dest, source)
+
+				// Because moving files with os.Rename to other hard-drives is not allowed, files must be created by new
+				// os.Rename only works on the same hard-drive
+				/*err = os.Rename(dest, source)
 				if err != nil {
 					return err
+				}*/
+				//open the sourceFile
+				inputFile, err := os.Open(source)
+				if err != nil {
+					return fmt.Errorf("couldn't open source file: %s", err)
+				}
+
+				//create the new file
+				outputFile, err := os.Create(dest)
+				if err != nil {
+					err = inputFile.Close()
+					return fmt.Errorf("couldn't open dest file: %s", err)
+				}
+				defer func() {
+					err = outputFile.Close()
+				}()
+
+				//copy the content from source to destination
+				_, err = io.Copy(outputFile, inputFile)
+				if err != nil {
+					return fmt.Errorf("writing to output file failed: %s", err)
+				}
+				err = inputFile.Close()
+				if err != nil {
+					return fmt.Errorf("closing inputFile failed: %s", err)
+				}
+				// The copy was successful, so now delete the original file
+				err = os.Remove(source)
+				if err != nil {
+					return fmt.Errorf("failed removing original file: %s", err)
 				}
 				message(0, "[runReset] Successfully reset changes to ", dest)
 			}
