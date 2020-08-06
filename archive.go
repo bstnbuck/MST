@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -16,9 +18,44 @@ func archive(sourceFiles []string, filenames []string, destFolder string, randPr
 
 	fileCount := 0
 	for i, sourceFile := range sourceFiles {
-		err := os.Rename(sourceFile, destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i])
+
+		// Because moving files with os.Rename to other hard-drives is not allowed, files must be created by new
+		// os.Rename only works on the same hard-drive
+		/*err := os.Rename(sourceFile, destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i])
 		if err != nil {
 			return err
+		}
+		*/
+
+		//open the sourceFile
+		inputFile, err := os.Open(sourceFile)
+		if err != nil {
+			return fmt.Errorf("couldn't open source file: %s", err)
+		}
+
+		//create the new file
+		outputFile, err := os.Create(destFolder + randPrefix + strconv.Itoa(fileCount) + filenames[i])
+		if err != nil {
+			err = inputFile.Close()
+			return fmt.Errorf("couldn't open dest file: %s", err)
+		}
+		defer func() {
+			err = outputFile.Close()
+		}()
+
+		//copy the content from source to destination
+		_, err = io.Copy(outputFile, inputFile)
+		if err != nil {
+			return fmt.Errorf("writing to output file failed: %s", err)
+		}
+		err = inputFile.Close()
+		if err != nil {
+			return fmt.Errorf("closing inputFile failed: %s", err)
+		}
+		// The copy was successful, so now delete the original file
+		err = os.Remove(sourceFile)
+		if err != nil {
+			return fmt.Errorf("failed removing original file: %s", err)
 		}
 
 		err = sysLogging(sourceFile, destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i])
