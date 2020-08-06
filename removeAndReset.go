@@ -25,9 +25,9 @@ func runReset(sysLogFileName string) error {
 				line := scanner.Text()
 
 				s := strings.Split(line, ":")
-				source, dest := s[0], s[1]
+				to, from := s[0], s[1]
 
-				err = os.Remove(source)
+				err = os.Remove(to)
 				if err != nil {
 					return err
 				}
@@ -39,13 +39,13 @@ func runReset(sysLogFileName string) error {
 					return err
 				}*/
 				//open the sourceFile
-				inputFile, err := os.Open(source)
+				inputFile, err := os.Open(from)
 				if err != nil {
 					return fmt.Errorf("couldn't open source file: %s", err)
 				}
 
 				//create the new file
-				outputFile, err := os.Create(dest)
+				outputFile, err := os.Create(to)
 				if err != nil {
 					err = inputFile.Close()
 					return fmt.Errorf("couldn't open dest file: %s", err)
@@ -64,11 +64,11 @@ func runReset(sysLogFileName string) error {
 					return fmt.Errorf("closing inputFile failed: %s", err)
 				}
 				// The copy was successful, so now delete the original file
-				err = os.Remove(source)
+				err = os.Remove(from)
 				if err != nil {
 					return fmt.Errorf("failed removing original file: %s", err)
 				}
-				message(0, "[runReset] Successfully reset changes to ", dest)
+				message(0, "[runReset] Successfully reset changes to ", to)
 			}
 			err = sysLogFile.Truncate(0)
 			if err != nil {
