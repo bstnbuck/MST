@@ -25,7 +25,7 @@ MST searches for large or old files and moves them to another drive (e.g. extern
 #### Windows:  
   * move into program directory
   * go build .
-  * Using CMD: **mst.exe + flags**
+  * Using CMD/Powershell (with Administrator privileges!): **mst.exe + flags**
 
 ## Usage:
 #### How it works:
@@ -59,8 +59,9 @@ MST searches for large or old files and moves them to another drive (e.g. extern
 
 
 ### Information
-- MST only runs with Linux and Windows OS
-- Tested on Windows 10, Debian 10 and Ubuntu 18/20
+- MST only runs with Linux and Windows OS.
+- Tested on Windows 10, Debian 10 and Ubuntu 18/20.
+- Due to Windows need a special flag to make a symlink you have to start CMD/Powershell with Administrator privileges.
 
 ### The following is still being implemented
 * Special implementation for ILIAS
