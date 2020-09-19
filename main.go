@@ -157,7 +157,7 @@ func main() {
 		//#####################################################
 		var accept string
 		//check arguments and partition into modes
-		if m == 0 && size > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false {
+		if m == 0 && size > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && analyze == false {
 			if size == 0 {
 				message(3, "[Modified] default parameter size=20")
 				size = 20
@@ -174,7 +174,7 @@ func main() {
 				fmt.Println(err)
 				return
 			}
-		} else if m == 1 && days > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && dest[0] == '/' && src[0] == '/' && analyze == false {
+		} else if m == 1 && days > 0 && dest[len(dest)-1:] == "/" && src[len(src)-1:] == "/" && analyze == false {
 			if days == 0 {
 				message(3, "[Modified] default parameter days=60")
 				days = 60
@@ -190,7 +190,7 @@ func main() {
 				fmt.Println(err)
 				return
 			}
-			//if arguments check failed, print to user
+			//if arguments check failed, print it to user
 		} else {
 			printHelp()
 			fmt.Println("[ERROR] Bad arguments!")

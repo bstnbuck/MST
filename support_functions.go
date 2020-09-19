@@ -18,8 +18,8 @@ import (
 func proveSymLink(sourceFiles []string, filenames []string, destFolder string, randPrefix string) (bool, error) {
 	if whichOS == "windows" {
 		destFolder = filepath.FromSlash(destFolder) //only for windows
-		message(1, "[proveSymLink]", "OS not supported")
-		return false, nil
+		//message(1, "[proveSymLink]", "OS not supported")
+		//return false, nil
 	}
 
 	//due to files moved all into one dir, files could have same name, this eliminates the problem
@@ -61,7 +61,7 @@ func printHelp() {
 		"!No liability is assumed!\n" +
 		"#**************************************#\n" +
 		"How it works:\n" +
-		"-MST only runs with linux os\n" +
+		"-MST only runs with linux and windows os\n" +
 		"-put a external hdd into your server / computer and mount it\n" +
 		"-MST moves bigger or older files to new hdd and makes symlink between them\n" +
 		"-this is helpful, for files of download-sites.\n" +
@@ -77,7 +77,7 @@ func printHelp() {
 		"-help -h		see this help\n" +
 		"-log			turn logging on (default = false)\n" +
 		"-save			save system log file with actual date(default = false)\n" +
-		"-a			analyze all files that could be archived (default = false)\n" +
+		"-a				analyze all files that could be archived (default = false)\n" +
 		"-reset			reset all changes of last run, optional with -log\n" +
 		"-remove			remove all changes of last run, optional with -log\n" +
 		"-filename		choose other systemLog file for -reset or -remove\n" +
@@ -250,7 +250,7 @@ func sysLogging(source string, dest string) error {
 
 	writer := bufio.NewWriter(sysLogFile)
 
-	_, err = fmt.Fprintf(writer, "%s:%s\n", source, dest)
+	_, err = fmt.Fprintf(writer, "%s<separator>%s\n", source, dest)
 	if err != nil {
 		return err
 	}

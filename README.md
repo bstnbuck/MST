@@ -5,13 +5,13 @@
 
 MST searches for large or old files and moves them to another drive (e.g. external hard disk) to avoid filling up your own
 
->**Not all functions are implemented yet! Right now MST is in an alpha stage.
+>**Windows OS is now supported by all functions! Not all functions are implemented yet! Right now MST is in an alpha stage.
   Attention! It is strongly discouraged to run with sudo rights	or run with system / program files**
 
 **Please report unchecked bugs via Issue!**
 
 ## Requirements
-* Go compiler (v1.14.4)
+* Go compiler (v1.15)
 
 ## Installation
 `git clone https://github.com/bstnbuck/MST.git`
@@ -25,7 +25,7 @@ MST searches for large or old files and moves them to another drive (e.g. extern
 #### Windows:  
   * move into program directory
   * go build .
-  * Using CMD: **mst.exe + flags** (only analyze is supported during now)
+  * Using CMD: **mst.exe + flags**
 
 ## Usage:
 #### How it works:
@@ -59,7 +59,8 @@ MST searches for large or old files and moves them to another drive (e.g. extern
 
 
 ### Information
-- MST only runs with Linux OS
+- MST only runs with Linux and Windows OS
+- Tested on Windows 10, Debian 10 and Ubuntu 18/20
 
 ### The following is still being implemented
-* Maybe Windows support.
+* Special implementation for ILIAS

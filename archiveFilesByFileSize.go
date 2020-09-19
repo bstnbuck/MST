@@ -66,7 +66,7 @@ func runByFileSize(size int64, dest string, source string) {
 // analyze which files should be archived, gets size of files should be archived and source folder
 // returns a string array of filenames and error if occoured
 func searchFileByFileSize(size int64, source string) ([]string, []string, error) {
-	fmt.Printf("[searchFileByFileSize] size: %d; source: %s\n", size, source)
+	fmt.Printf("[searchFileByFileSize] size: %d Byte; source: %s\n", size, source)
 	var filesToArchiveWithPath []string
 	var fileNames []string
 	if whichOS == "windows" {

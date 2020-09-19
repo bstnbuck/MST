@@ -12,8 +12,6 @@ import (
 func archive(sourceFiles []string, filenames []string, destFolder string, randPrefix string) error {
 	if whichOS == "windows" {
 		destFolder = filepath.FromSlash(destFolder) //only for windows
-		message(1, "[archive]", "OS not supported")
-		return nil
 	}
 
 	fileCount := 0
@@ -37,12 +35,8 @@ func archive(sourceFiles []string, filenames []string, destFolder string, randPr
 		outputFile, err := os.Create(destFolder + randPrefix + strconv.Itoa(fileCount) + filenames[i])
 		if err != nil {
 			err = inputFile.Close()
-			return fmt.Errorf("couldn't open dest file: %s", err)
+			return fmt.Errorf("could not open dest file: %s", err)
 		}
-		defer func() {
-			err = outputFile.Close()
-		}()
-
 		//copy the content from source to destination
 		_, err = io.Copy(outputFile, inputFile)
 		if err != nil {
@@ -51,6 +45,10 @@ func archive(sourceFiles []string, filenames []string, destFolder string, randPr
 		err = inputFile.Close()
 		if err != nil {
 			return fmt.Errorf("closing inputFile failed: %s", err)
+		}
+		err = outputFile.Close()
+		if err != nil {
+			return fmt.Errorf("closing outputFile failed: %s", err)
 		}
 		// The copy was successful, so now delete the original file
 		err = os.Remove(sourceFile)
@@ -63,7 +61,6 @@ func archive(sourceFiles []string, filenames []string, destFolder string, randPr
 			return err
 		}
 
-		// only linux using
 		//new output name is, something random + file-id + file-name, this prevent matching file-names
 		err = os.Symlink(destFolder+randPrefix+strconv.Itoa(fileCount)+filenames[i], sourceFile)
 		if err != nil {
